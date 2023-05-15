@@ -1,4 +1,5 @@
-import { IDL_TYPE_LEAVES, IdlType } from '../idl';
+import { prefixedSize } from '../shared';
+import { IDL_TYPE_LEAVES, IdlType, IdlTypeString } from '../idl';
 import { ArrayTypeNode, arrayTypeNodeFromIdl } from './ArrayTypeNode';
 import { BoolTypeNode, boolTypeNode } from './BoolTypeNode';
 import { BytesTypeNode, bytesTypeNode } from './BytesTypeNode';
@@ -56,7 +57,7 @@ export const createTypeNodeFromIdl = (idlType: IdlType): TypeNode => {
   // Leaf.
   if (typeof idlType === 'string' && IDL_TYPE_LEAVES.includes(idlType)) {
     if (idlType === 'bool') return boolTypeNode();
-    if (idlType === 'string') return stringTypeNode();
+    if (idlType === "string") return stringTypeNode();
     if (idlType === 'publicKey') return publicKeyTypeNode();
     if (idlType === 'bytes') return bytesTypeNode();
     return numberTypeNode(idlType);
@@ -113,6 +114,15 @@ export const createTypeNodeFromIdl = (idlType: IdlType): TypeNode => {
   // Tuple.
   if ('tuple' in idlType && Array.isArray(idlType.tuple)) {
     return tupleTypeNodeFromIdl(idlType);
+  }
+
+  // String
+  if ('kind' in idlType && idlType.kind === "string") {
+    const {size} = idlType as IdlTypeString
+    if (size) {
+      return stringTypeNode({size: prefixedSize(numberTypeNode(size))})
+  }
+    return stringTypeNode();
   }
 
   // Throw an error for unsupported types.

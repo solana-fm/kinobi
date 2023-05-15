@@ -8,6 +8,7 @@ export type IdlType =
   | IdlTypeSet
   | IdlTypeStruct
   | IdlTypeEnum
+  | IdlTypeString
   | IdlTypeLeaf;
 
 // Defined.
@@ -59,6 +60,12 @@ export type IdlTypeEnum = {
 export type IdlTypeEnumVariant = { name: string; fields?: IdlTypeEnumFields };
 export type IdlTypeEnumFields = IdlTypeEnumField[] | IdlType[];
 export type IdlTypeEnumField = { name: string; type: IdlType; docs?: string[] };
+
+// String
+export type IdlTypeString = {
+  kind: "string";
+  size?: IdlTypeUnsignedInteger
+}
 
 // Leaves.
 export const IDL_TYPE_LEAVES = [
